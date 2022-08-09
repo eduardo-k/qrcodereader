@@ -30,11 +30,11 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring gd
 # RUN if [ -f $imagemagic_config ] ; then sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>/<policy domain="coder" rights="read|write" pattern="PDF" \/>/g' $imagemagic_config ; else echo did not see file $imagemagic_config ; fi
 
 # Install composer
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node
-# RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - 
-# RUN apt-get install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
 
 # Set working directory
 WORKDIR /var/www/html

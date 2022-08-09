@@ -1,22 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
+<div class="container col-xl-10 col-xxl-8 px-4 py-5">
+    <div class="row align-items-center g-lg-5 py-5">
+        <div class="col-lg-7 text-center text-lg-start">
+            <h1 class="display-4 fw-bold lh-1 mb-3">Send us a PDF</h1>
+            <p class="col-lg-10 fs-4">Upload a PDF document and we'll identify the QRCode inside it.</p>
+        </div>
+        <div class="col-md-10 mx-auto col-lg-5">
+            <form action="/" method="POST" class="p-4 p-md-5 border rounded-3 bg-light" enctype="multipart/form-data">
+                @csrf
+                <div class="form-floating mb-3">
+                    <input type="file" class="form-control-file" id="document" name="document">
                 </div>
-            </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
+            </form>
+            @if(session('feedback'))
+            {{ session('feedback') }}
+            @endif
         </div>
     </div>
 </div>

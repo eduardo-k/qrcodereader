@@ -17,6 +17,12 @@
                     <form method="POST" action="{{ route('password.email') }}">
                         @csrf
 
+                        <div class="row offset-md-2 col-md-8">
+                            <div class="alert alert-danger text-center" role="alert">
+                                Function disabled. No email server configured!
+                            </div>
+                        </div>
+
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
 
@@ -33,7 +39,7 @@
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" disabled>
                                     {{ __('Send Password Reset Link') }}
                                 </button>
                             </div>
