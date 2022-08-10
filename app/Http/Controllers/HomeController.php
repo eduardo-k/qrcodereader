@@ -9,6 +9,8 @@ use App\Models\Document;
 
 class HomeController extends Controller
 {
+    const PATH_DOCUMENTS = 'documents/';
+
     /**
      * Show the application dashboard.
      *
@@ -17,6 +19,14 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
+    }
+
+    private function createFilename($document) {
+        return md5($document->getClientOriginalName() . strToTime('now')) . "." . $document->extension();
+    }
+
+    private function savePDF($document, $filename) {
+        $document->move(public_path(self::PATH_DOCUMENTS), $filename);
     }
 
     /**
@@ -39,14 +49,17 @@ class HomeController extends Controller
             return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'Document must be PDF and max 2048Kb!']);
         }
 
-        $reader = new ReaderService($request->document);
+        $reader = new ReaderService();
+        $qrcode = $reader->readDocument($request->file('document'));
 
-        if (is_null($reader->getQrcode())) {
+        if (is_null($qrcode)) {
             return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'QRCode not detected!']);
         }
 
-        $this->save($reader->getFilename(), $reader->getQrcode());
+        $filename = $this->createFilename($request->document);
+        $this->savePDF($request->document, $filename);
+        $this->save($filename, $qrcode);
 
-        return view('home', [ 'feedbackType' => 'success', 'feedbackText' => 'QRCode detected successfuly: '.$reader->getQrcode()]);
+        return view('home', [ 'feedbackType' => 'success', 'feedbackText' => 'QRCode detected successfuly: '.$qrcode]);
     }
 }
