@@ -19,6 +19,9 @@ It also has a protected administration area, where you can view the files sent i
     $ docker-compose up -d --build
     ```
 
+### Access
+* Accessible at address localhost:8080
+
 ### Testing
 * Command to run tests
 
