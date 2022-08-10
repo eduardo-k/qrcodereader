@@ -61,26 +61,31 @@ class DocumentController extends Controller
      * A PDF has been uploaded. So read it and try to get the QRCode
      */
     public function store(Request $request) {
-        if (!$request->hasFile('document') || !$request->file('document')->isValid()) {  
-            return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'No documents have been sent!']);
+        try {
+            if (!$request->hasFile('document') || !$request->file('document')->isValid()) {  
+                return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'No documents have been sent!']);
+            }
+            
+            $validator = Validator::make($request->all(), ['document' => ['required','mimes:pdf','max:2048']]);
+            if ($validator->fails()) {
+                return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'Document must be PDF and max 2048Kb!']);
+            }
+
+            $reader = new ReaderService();
+            $qrcode = $reader->readDocument($request->file('document'));
+
+            if (is_null($qrcode)) {
+                return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'QRCode not detected!']);
+            }
+
+            $filename = $this->createFilename($request->document);
+            $this->savePDF($request->document, $filename);
+            $this->save($filename, $qrcode);
+
+            return view('home', [ 'feedbackType' => 'success', 'feedbackText' => 'QRCode detected successfuly: '.$qrcode]);
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'Some error occurred! Please, contact admin']);
         }
-          
-        $validator = Validator::make($request->all(), ['document' => ['required','mimes:pdf','max:2048']]);
-        if ($validator->fails()) {
-            return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'Document must be PDF and max 2048Kb!']);
-        }
-
-        $reader = new ReaderService();
-        $qrcode = $reader->readDocument($request->file('document'));
-
-        if (is_null($qrcode)) {
-            return view('home', [ 'feedbackType' => 'danger', 'feedbackText' => 'QRCode not detected!']);
-        }
-
-        $filename = $this->createFilename($request->document);
-        $this->savePDF($request->document, $filename);
-        $this->save($filename, $qrcode);
-
-        return view('home', [ 'feedbackType' => 'success', 'feedbackText' => 'QRCode detected successfuly: '.$qrcode]);
     }
 }
