@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +17,7 @@ use App\Http\Controllers\AdminController;
 
 Auth::routes();
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/', [HomeController::class, 'store'])->name('uploadPDF');
+Route::get('/', [DocumentController::class, 'index'])->name('home');
+Route::post('/', [DocumentController::class, 'store'])->name('uploadPDF');
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin')->middleware('auth');

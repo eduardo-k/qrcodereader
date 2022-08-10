@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use App\Services\ReaderService;
 use App\Models\Document;
 
-class HomeController extends Controller
+class DocumentController extends Controller
 {
     const PATH_DOCUMENTS = 'documents/';
 
@@ -24,22 +25,32 @@ class HomeController extends Controller
     /**
      * Create a unique filename
      * 
+     * @param UploadedFile $document
      * @return string
      */
-    private function createFilename($document) {
+    private function createFilename(UploadedFile $document) {
         return md5($document->getClientOriginalName() . strToTime('now')) . "." . $document->extension();
     }
 
-    private function savePDF($document, $filename) {
+    /**
+     * Save uploaded file to the documents folder
+     * 
+     * @param UploadedFile $document
+     * @param string $filename
+     * @return void
+     */
+    private function savePDF(UploadedFile $document, string $filename) {
         $document->move(public_path(self::PATH_DOCUMENTS), $filename);
     }
 
     /**
      * Save document information to the database
      * 
+     * @param string $filename
+     * @param string $qrcode
      * @return void
      */
-    private function save($filename, $qrcode) {
+    private function save(string $filename, string $qrcode) {
         $document = new Document;
         $document->filename = $filename;
         $document->qrcode = $qrcode;
